@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание тегов для YouTube</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #3b5998;
+        }
+        textarea, input {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            resize: none;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3b5998;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #365e92;
+        }
+        #output, #wordsList {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #f7f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Генератор тегов для YouTube</h1>
+        
+        <h2>Слова через запятую:</h2>
+        <input type="text" id="commaInput" placeholder="Введите слова, разделенные запятыми...">
+        
+        <h2>Слова через новую строку:</h2>
+        <textarea id="lineInput" placeholder="Введите слова, каждое с новой строки..."></textarea>
+        
+        <button onclick="generateTags()">Создать теги</button>
+        <button onclick="resetFields()">Сбросить</button>
+        
+        <h2>Список введенных слов:</h2>
+        <div id="wordsList"></div>
+
+        <h2>Результат:</h2>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function generateTags() {
+            const commaInput = document.getElementById('commaInput').value;
+            const lineInput = document.getElementById('lineInput').value;
+
+            let tags = [];
+            let allWords = [];
+
+            // Обработка ввода через запятую
+            if (commaInput.trim() !== '') {
+                const wordsFromComma = commaInput.split(',').map(word => word.trim());
+                allWords = allWords.concat(wordsFromComma);
+                const commaTags = wordsFromComma.map(word => '#' + word.charAt(0).toUpperCase() + word.slice(1).replace(/\s+/g, '')); // Убираем пробелы в тегах
+                tags = tags.concat(commaTags);
+            }
+
+            // Обработка ввода через новую строку
+            if (lineInput.trim() !== '') {
+                const lines = lineInput.split('\n').filter(line => line.trim() !== '');
+                const lineTags = lines.map(line => {
+                    const words = line.trim().split(/\s+/); // Разделяем по пробелам
+                    allWords = allWords.concat(line.trim()); // Добавляем целую строку
+                    const tag = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(''); // Формируем тег
+                    return '#' + tag; // Добавляем знак #
+                });
+                tags = tags.concat(lineTags);
+            }
+
+            // Формируем выводимый список слов
+            const formattedWords = allWords.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(','); // Убираем пробелы после запятых
+
+            // Выводим результат
+            document.getElementById('output').textContent = tags.join(' ');
+            document.getElementById('wordsList').textContent = formattedWords;
+        }
+
+        function resetFields() {
+            document.getElementById('commaInput').value = '';
+            document.getElementById('lineInput').value = '';
+            document.getElementById('wordsList').textContent = '';
+            document.getElementById('output').textContent = '';
+        }
+    </script>
+</body>
+</html>
