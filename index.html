@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создание тегов для YouTube</title>
+      <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+  <script>
+  vkBridge.send('VKWebAppInit');
+</script>
     <style>
+        /* Основные стили */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f2f5;
@@ -15,6 +20,7 @@
             align-items: center;
             min-height: 100vh;
         }
+
         .container {
             background-color: white;
             border-radius: 8px;
@@ -23,38 +29,73 @@
             max-width: 800px;
             padding: 20px;
         }
+
         h1, h2 {
             color: #3b5998;
+            margin-bottom: 10px;
         }
-        textarea, input {
+
+        input, textarea {
             width: 100%;
             border: 1px solid #ccc;
             border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
             resize: none;
             font-size: 16px;
+            box-sizing: border-box;
         }
+
         button {
             background-color: #3b5998;
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 10px 15px;
+            padding: 12px 20px;
             cursor: pointer;
             font-size: 16px;
             margin-right: 10px;
+            box-sizing: border-box;
         }
+
         button:hover {
             background-color: #365e92;
         }
+
         #output, #wordsList {
             margin-top: 20px;
             white-space: pre-wrap;
             border: 1px solid #ccc;
             border-radius: 4px;
-            padding: 10px;
+            padding: 12px;
             background-color: #f7f9fa;
+            box-sizing: border-box;
+        }
+
+        /* Адаптивная верстка */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                max-width: 100%;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.2em;
+            }
+
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            input, textarea {
+                padding: 10px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -90,7 +131,7 @@
             if (commaInput.trim() !== '') {
                 const wordsFromComma = commaInput.split(',').map(word => word.trim());
                 allWords = allWords.concat(wordsFromComma);
-                const commaTags = wordsFromComma.map(word => '#' + word.charAt(0).toUpperCase() + word.slice(1).replace(/\s+/g, '')); // Убираем пробелы в тегах
+                const commaTags = wordsFromComma.map(word => '#' + capitalizeWords(word)); // Заглавные буквы в каждом слове
                 tags = tags.concat(commaTags);
             }
 
@@ -100,18 +141,23 @@
                 const lineTags = lines.map(line => {
                     const words = line.trim().split(/\s+/); // Разделяем по пробелам
                     allWords = allWords.concat(line.trim()); // Добавляем целую строку
-                    const tag = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(''); // Формируем тег
+                    const tag = words.map(word => capitalizeWords(word)).join(''); // Формируем тег с заглавными буквами в каждом слове
                     return '#' + tag; // Добавляем знак #
                 });
                 tags = tags.concat(lineTags);
             }
 
-            // Формируем выводимый список слов
-            const formattedWords = allWords.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(','); // Убираем пробелы после запятых
+            // Формируем выводимый список слов с заглавной буквой
+            const formattedWords = allWords.map(word => capitalizeWords(word)).join(',');
 
             // Выводим результат
             document.getElementById('output').textContent = tags.join(' ');
             document.getElementById('wordsList').textContent = formattedWords;
+        }
+
+        function capitalizeWords(word) {
+            // Первая буква каждого слова заглавная, остальные — строчные
+            return word.split(/\s+/).map(subWord => subWord.charAt(0).toUpperCase() + subWord.slice(1).toLowerCase()).join('');
         }
 
         function resetFields() {
@@ -123,3 +169,4 @@
     </script>
 </body>
 </html>
+
